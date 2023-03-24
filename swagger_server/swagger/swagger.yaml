@@ -1,0 +1,1217 @@
+openapi: 3.0.0
+info:
+  title: Bakers hub OpenAPI spec
+  version: 0.0.1
+servers:
+- url: http://localhost:8080/v1
+  description: Dev server
+paths:
+  /bakers:
+    get:
+      tags:
+      - Bakers
+      summary: Returns list of bakers
+      operationId: get_bakers
+      parameters:
+      - name: status
+        in: query
+        description: Bakers' status
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum: [active, not active, banned]
+        example: active
+      - name: rating
+        in: query
+        description: Baker's rating
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+        example: 7.5
+      responses:
+        "200":
+          description: Successful response with list of bakers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Baker'
+                x-content-type: application/json
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.bakers_controller
+    post:
+      tags:
+      - Bakers
+      summary: Creates a new baker
+      operationId: create_baker
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Baker'
+        required: true
+      responses:
+        "200":
+          description: Successful response with new baker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Baker'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.bakers_controller
+  /bakers/{baker_id}:
+    get:
+      tags:
+      - Bakers
+      summary: Returns backer with requested ID
+      operationId: get_baker_by_id
+      parameters:
+      - name: baker_id
+        in: path
+        description: Baker's id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "1"
+      responses:
+        "200":
+          description: Successful response with relevant baker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Baker'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.bakers_controller
+    put:
+      tags:
+      - Bakers
+      summary: Updates existing baker
+      operationId: update_baker_by_id
+      parameters:
+      - name: baker_id
+        in: path
+        description: Baker's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Baker'
+        required: true
+      responses:
+        "200":
+          description: Successful response with updated baker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Baker'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.bakers_controller
+    delete:
+      tags:
+      - Bakers
+      description: Deletes baker with requested ID
+      operationId: delete_baker_by_id
+      parameters:
+      - name: baker_id
+        in: path
+        description: Baker's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      responses:
+        "200":
+          description: Successfully deleted
+          content:
+            application/json: {}
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.bakers_controller
+  /bakers/{baker_id}/reviews:
+    get:
+      tags:
+      - Bakers
+      summary: Returns baker reviews
+      operationId: get_baker_reviews_by_baker_id
+      parameters:
+      - name: baker_id
+        in: path
+        description: Baker's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      responses:
+        "200":
+          description: Successful response with list of baker reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BakerReview'
+                x-content-type: application/json
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.bakers_controller
+    post:
+      tags:
+      - Bakers
+      summary: Creates baker review
+      operationId: create_baker_review
+      parameters:
+      - name: baker_id
+        in: path
+        description: Baker's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BakerReview'
+        required: true
+      responses:
+        "200":
+          description: Successful response with  baker review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BakerReview'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.bakers_controller
+    delete:
+      tags:
+      - Bakers
+      summary: Deletes baker review
+      operationId: delete_baker_review_by_id
+      parameters:
+      - name: baker_id
+        in: path
+        description: Baker's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      - name: review_id
+        in: query
+        description: Review's ID
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "1"
+      responses:
+        "200":
+          description: Successfully deleted
+          content:
+            application/json: {}
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.bakers_controller
+  /products:
+    get:
+      tags:
+      - Products
+      summary: Returns products of all bakers
+      operationId: get_products
+      parameters:
+      - name: title
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: cake
+      - name: baker_id
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: "1"
+      - name: rating
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+        example: 6.7
+      responses:
+        "200":
+          description: Successful response with list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+                x-content-type: application/json
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.products_controller
+    post:
+      tags:
+      - Products
+      summary: Creates a new product
+      operationId: create_product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        "200":
+          description: Successful response with new product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.products_controller
+  /products/{product_id}:
+    get:
+      tags:
+      - Products
+      summary: Returns product with requested ID
+      operationId: get_product_by_id
+      parameters:
+      - name: product_id
+        in: path
+        description: Product's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      responses:
+        "200":
+          description: Successful response with relevant product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.products_controller
+    put:
+      tags:
+      - Products
+      summary: Updating existing product
+      operationId: update_product_by_id
+      parameters:
+      - name: product_id
+        in: path
+        description: Product's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        "200":
+          description: Successful response with updated product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.products_controller
+    delete:
+      tags:
+      - Products
+      description: Deletes product with requested Id
+      operationId: delete_product_by_id
+      parameters:
+      - name: product_id
+        in: path
+        description: Product's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      responses:
+        "200":
+          description: Successfully deleted
+          content:
+            application/json: {}
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.products_controller
+  /products/{product_id}/reviews:
+    get:
+      tags:
+      - Products
+      summary: Returns product reviews
+      operationId: get_product_reviews_by_product_id
+      parameters:
+      - name: product_id
+        in: path
+        description: Product's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      responses:
+        "200":
+          description: Successful response with list of product reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductReview'
+                x-content-type: application/json
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.products_controller
+    post:
+      tags:
+      - Products
+      summary: Creates product review
+      operationId: create_product_review
+      parameters:
+      - name: product_id
+        in: path
+        description: Product's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductReview'
+        required: true
+      responses:
+        "200":
+          description: Successful response with product review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductReview'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.products_controller
+    delete:
+      tags:
+      - Products
+      summary: Deletes product review
+      operationId: delete_product_review_by_id
+      parameters:
+      - name: product_id
+        in: path
+        description: Product's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      - name: review_id
+        in: query
+        description: Review's ID
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "1"
+      responses:
+        "200":
+          description: Successfully deleted
+          content:
+            application/json: {}
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.products_controller
+  /orders:
+    get:
+      tags:
+      - Orders
+      summary: Returns orders
+      operationId: get_orders
+      parameters:
+      - name: status
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - in process
+          - finished
+          - cancelled
+          - received
+        example: in process
+      - name: customer_id
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: "1"
+      - name: baker_id
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: "1"
+      responses:
+        "200":
+          description: Successful response with list of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+                x-content-type: application/json
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.orders_controller
+    post:
+      tags:
+      - Orders
+      summary: Creates new order
+      operationId: create_order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      responses:
+        "200":
+          description: Successful response with new order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.orders_controller
+  /orders/{order_id}:
+    get:
+      tags:
+      - Orders
+      summary: Returns order with requested ID
+      operationId: get_order_by_id
+      parameters:
+      - name: order_id
+        in: path
+        description: Order's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      responses:
+        "200":
+          description: Successful response with relevant order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.orders_controller
+    put:
+      tags:
+      - Orders
+      summary: Updates existing order
+      operationId: update_order_by_id
+      parameters:
+      - name: order_id
+        in: path
+        description: Order's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      responses:
+        "200":
+          description: Successful response with updated order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.orders_controller
+  /customers:
+    get:
+      tags:
+      - Customers
+      summary: Returns customers
+      operationId: get_customers
+      parameters:
+      - name: status
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - active
+          - not active
+          - banned
+        example: active
+      - in: query
+        name: rating
+        required: false
+        schema:
+          type: number
+        example: 7.3
+      responses:
+        "200":
+          description: Successful response with list of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+                x-content-type: application/json
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.customers_controller
+    post:
+      tags:
+      - Customers
+      summary: Creates new customer
+      operationId: create_customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        required: true
+      responses:
+        "200":
+          description: Successful response with new customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.customers_controller
+  /customers/{customer_id}:
+    get:
+      tags:
+      - Customers
+      summary: Returns customer with requested Id
+      operationId: get_customer_by_id
+      parameters:
+      - name: customer_id
+        in: path
+        description: Customer's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      responses:
+        "200":
+          description: Successful response with relevant customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.customers_controller
+    put:
+      tags:
+      - Customers
+      summary: Updates existing customer
+      operationId: update_customer_by_id
+      parameters:
+      - name: customer_id
+        in: path
+        description: Customer's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        required: true
+      responses:
+        "200":
+          description: Successful response with updated customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.customers_controller
+  /customers/{customer_id}/reviews:
+    get:
+      tags:
+      - Customers
+      summary: Returns customer reviews
+      operationId: get_customer_reviews_by_customer_id
+      parameters:
+      - name: customer_id
+        in: path
+        description: Customer's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      responses:
+        "200":
+          description: Successful response with customer review
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerReview'
+                x-content-type: application/json
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.customers_controller
+    post:
+      tags:
+      - Customers
+      summary: Creates customer review
+      operationId: create_customer_review
+      parameters:
+      - name: customer_id
+        in: path
+        description: Customer's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerReview'
+        required: true
+      responses:
+        "200":
+          description: Successful response with list of customer reviews
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerReview'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.customers_controller
+    delete:
+      tags:
+      - Customers
+      summary: Deletes customer review
+      operationId: delete_customer_review_by_id
+      parameters:
+      - name: customer_id
+        in: path
+        description: Customer's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: "1"
+      - name: review_id
+        in: query
+        description: Review's ID
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "1"
+      responses:
+        "200":
+          description: Successfully deleted
+          content:
+            application/json: {}
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+      x-openapi-router-controller: swagger_server.controllers.customers_controller
+components:
+  schemas:
+    Baker:
+      required:
+      - contact
+      - name
+      - status
+      type: object
+      properties:
+        baker_id:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: Mila
+        contact:
+          type: string
+          example: "79200123456"
+        status:
+          type: string
+          enum:
+          - active
+          - not active
+          - deleted
+        rating:
+          type: number
+          example: 0
+        finished_orders:
+          type: integer
+          example: 0
+      example:
+        finished_orders: 0
+        contact: "79200123456"
+        name: Mila
+        rating: 0
+        baker_id: "1"
+        status: active
+    Customer:
+      required:
+      - contact
+      - name
+      type: object
+      properties:
+        customer_id:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: Igor Sergeevich
+        contact:
+          type: string
+          example: "79201111111"
+        rating:
+          type: number
+          example: 8.2
+        status:
+          type: string
+          enum:
+          - active
+          - not active
+          - banned
+      example:
+        contact: "79201111111"
+        name: Igor Sergeevich
+        rating: 8.2
+        customer_id: "1"
+        status: active
+    Order:
+      required:
+      - baker_id
+      - customer_id
+      - date
+      - price
+      - products
+      - status
+      type: object
+      properties:
+        order_id:
+          type: string
+          example: "1"
+        customer_id:
+          type: string
+          example: "1"
+        baker_id:
+          type: string
+          example: "1"
+        price:
+          type: number
+          example: 110.5
+        products:
+          type: array
+          items:
+            type: string
+            example: "1"
+        date:
+          type: string
+          example: "22/12/2023: 17.34"
+        status:
+          type: string
+          enum:
+          - ready
+          - in progress
+          - declined
+          - finished
+      example:
+        date: "22/12/2023: 17.34"
+        price: 110.5
+        baker_id: "1"
+        customer_id: "1"
+        order_id: "1"
+        products:
+        - "1"
+        - "2"
+        status: ready
+    Product:
+      required:
+      - baker_id
+      - description
+      - execution
+      - ingredients
+      - price
+      - status
+      - title
+      type: object
+      properties:
+        product_id:
+          type: string
+          example: "1"
+        baker_id:
+          type: string
+          example: "1"
+        title:
+          type: string
+          example: cake
+        price:
+          type: string
+          example: 1000/kg
+        description:
+          type: string
+          example: diet cake with no sugar
+        ingredients:
+          type: string
+          example: "flour, eggs, rotten tomatoes"
+        execution:
+          type: string
+          example: 1 day
+        status:
+          type: string
+          enum:
+          - available
+          - not available
+        rating:
+          type: number
+          example: 7
+        reviews_quantity:
+          type: integer
+          format: int64
+          example: 1
+      example:
+        reviews_quantity: 1
+        execution: 1 day
+        price: 1000/kg
+        product_id: "1"
+        rating: 7
+        description: diet cake with no sugar
+        ingredients: "flour, eggs, rotten tomatoes"
+        baker_id: "1"
+        title: cake
+        status: available
+    BakerReview:
+      required:
+      - author_id
+      - description
+      - rating
+      type: object
+      properties:
+        review_id:
+          type: string
+          example: "1"
+        baker_id:
+          type: string
+        author_id:
+          type: string
+          example: "1"
+        rating:
+          type: integer
+          example: 9
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+        description:
+          type: string
+          example: very good very well
+      example:
+        review_id: "1"
+        rating: 9
+        description: very good very well
+        baker_id: baker_id
+        author_id: "1"
+    CustomerReview:
+      required:
+      - author_id
+      - customer_id
+      - description
+      - rating
+      type: object
+      properties:
+        review_id:
+          type: string
+          example: "1"
+        customer_id:
+          type: string
+          example: "1"
+        author_id:
+          type: string
+          example: "1"
+        rating:
+          type: integer
+          example: 9
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+        description:
+          type: string
+          example: very good very well
+      example:
+        review_id: "1"
+        rating: 9
+        description: very good very well
+        customer_id: "1"
+        author_id: "1"
+    ProductReview:
+      required:
+      - author_id
+      - product_id
+      - description
+      - rating
+      type: object
+      properties:
+        review_id:
+          type: string
+          example: "1"
+        author_id:
+          type: string
+          example: "1"
+        product_id:
+          type: string
+          example: "1"
+        rating:
+          type: integer
+          example: 9
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+        description:
+          type: string
+          example: very good very well
+      example:
+        review_id: "1"
+        rating: 9
+        description: very good very well
+        author_id: "1"
+    DefaultError:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+
